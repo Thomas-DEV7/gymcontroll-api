@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trainings', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');         // ID interno (PK)
+            $table->uuid('uuid')->unique();      // UUID público
+            $table->string('name');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+        
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+        
+        
     }
 
     /**
