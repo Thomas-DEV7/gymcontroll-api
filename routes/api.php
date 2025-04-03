@@ -18,5 +18,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/trainings/{uuid}', [TrainingController::class, 'show']);
     Route::delete('/trainings/{uuid}', [TrainingController::class, 'destroy']);
 
+    Route::post('/trainings/{training_uuid}/exercises', [ExerciseController::class, 'store']);
 
 });
