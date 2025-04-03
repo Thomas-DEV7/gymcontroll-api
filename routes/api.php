@@ -13,6 +13,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Outras rotas autenticadas
+    Route::get('/trainings', [TrainingController::class, 'index']);
 
 
 });
