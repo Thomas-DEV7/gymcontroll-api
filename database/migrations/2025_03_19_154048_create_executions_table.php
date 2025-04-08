@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('executions', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
+            $table->unsignedBigInteger('exercises_id');
+            $table->int('weight');
+            $table->int('amount');
+
             $table->timestamps();
+            $table->foreign('exercises_id')->references('id')->on('exercises')->onDelete('cascade');
         });
     }
 
