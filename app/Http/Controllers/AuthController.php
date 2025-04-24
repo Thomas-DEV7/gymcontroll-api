@@ -5,28 +5,37 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
 
 class AuthController extends Controller
 {
-    // Registrar usuário
     public function register(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users,email',
-            'password' => 'required|string|confirmed|min:6'
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         $user = User::create([
-            'uuid' => \Illuminate\Support\Str::uuid(),
+            'uuid' => Str::uuid(),
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
+        // Autenticar o usuário e gerar token
+        $token = $user->createToken('API Token')->plainTextToken;
+
         return response()->json([
-            'message' => 'Usuário registrado com sucesso!',
-            'uuid' => $user->uuid
+            'user' => $user,
+            'token' => $token,
         ], 201);
     }
 

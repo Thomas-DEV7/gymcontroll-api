@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('trainings', function (Blueprint $table) {
-            $table->bigIncrements('id');         // ID interno (PK)
+            $table->id();         // ID interno (PK)
             $table->uuid('uuid')->unique();      // UUID público
             $table->string('name');
             $table->unsignedBigInteger('user_id');
