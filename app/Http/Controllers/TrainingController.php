@@ -4,42 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Models\Training;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TrainingController extends Controller
 {
-    public function index()
-    {
-        $trainings = Training::with('exercises')->get();
-
-        return response()->json($trainings->map(function ($training) {
-            return [
-                'uuid' => $training->uuid,
-                'name' => $training->name,
-                'exercises' => $training->exercises->map(function ($exercise) {
-                    return [
-                        'uuid' => $exercise->uuid,
-                        'name' => $exercise->name
-                    ];
-                })
-            ];
-        }));
-    }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
 
-        $training = Training::create([
-            'name' => $request->name,
-            'user_id' => auth()->id()
-        ]);
+            $training = Training::create([
+                'uuid' => Str::uuid(),
+                'name' => $validated['name'],
+                'user_id' => auth()->id(),
+            ]);
 
-        return response()->json([
-            'uuid' => $training->uuid,
-            'name' => $training->name
-        ], 201);
+            return response()->json([
+                'message' => 'Treino criado com sucesso.',
+                'data' => $training
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Erro de validação.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar treino: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erro inesperado ao criar treino.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function show($uuid)
@@ -60,11 +60,7 @@ class TrainingController extends Controller
         ]);
     }
 
-    public function destroy($uuid)
-    {
-        $training = Training::where('uuid', $uuid)->firstOrFail();
-        $training->delete();
 
-        return response()->json(['message' => 'Training deleted successfully.']);
-    }
+
+    
 }
