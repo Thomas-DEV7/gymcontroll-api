@@ -10,6 +10,33 @@ use Illuminate\Support\Str;
 class TrainingController extends Controller
 {
 
+    public function update(Request $request, $uuid)
+    {
+        try {
+            $training = Training::where('uuid', $uuid)->where('user_id', auth()->id())->firstOrFail();
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
+            $training->update([
+                'name' => $validated['name'],
+            ]);
+
+            return response()->json([
+                'message' => 'Treino atualizado com sucesso.',
+                'data' => $training,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar treino: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erro ao atualizar o treino.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         try {
@@ -60,7 +87,20 @@ class TrainingController extends Controller
         ]);
     }
 
+    public function destroy($uuid)
+    {
+        try {
+            $training = Training::where('uuid', $uuid)->where('user_id', auth()->id())->firstOrFail();
+            $training->delete();
 
-
-    
+            return response()->json([
+                'message' => 'Treino excluído com sucesso.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao excluir o treino.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

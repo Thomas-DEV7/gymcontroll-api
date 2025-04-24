@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Outras rotas autenticadas
     Route::get('/trainings', [TrainingController::class, 'index']);
     Route::post('/trainings', [TrainingController::class, 'store']);
+    Route::put('/trainings/{uuid}', [TrainingController::class, 'update']);
     Route::get('/trainings/{uuid}', [TrainingController::class, 'show']);
     Route::delete('/trainings/{uuid}', [TrainingController::class, 'destroy']);
 
