@@ -71,20 +71,21 @@ class TrainingController extends Controller
 
     public function show($uuid)
     {
-        $training = Training::where('uuid', $uuid)
-            ->with('exercises')
-            ->firstOrFail();
+        try {
+            $training = Training::where('uuid', $uuid)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
 
-        return response()->json([
-            'uuid' => $training->uuid,
-            'name' => $training->name,
-            'exercises' => $training->exercises->map(function ($exercise) {
-                return [
-                    'uuid' => $exercise->uuid,
-                    'name' => $exercise->name
-                ];
-            })
-        ]);
+            return response()->json([
+                'message' => 'Treino recuperado com sucesso.',
+                'data' => $training
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao buscar o treino.',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
     public function destroy($uuid)
