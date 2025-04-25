@@ -9,6 +9,24 @@ use Illuminate\Support\Str;
 
 class TrainingController extends Controller
 {
+    public function index()
+    {
+        try {
+            $user = auth()->user();
+
+            $trainings = Training::where('user_id', $user->id)->get();
+
+            return response()->json([
+                'message' => 'Treinos recuperados com sucesso.',
+                'data' => $trainings
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Erro ao recuperar treinos.',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
 
     public function update(Request $request, $uuid)
     {
