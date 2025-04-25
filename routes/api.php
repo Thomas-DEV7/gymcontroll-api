@@ -18,7 +18,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/trainings/{uuid}', [TrainingController::class, 'update']);
     Route::get('/trainings/{uuid}', [TrainingController::class, 'show']);
     Route::delete('/trainings/{uuid}', [TrainingController::class, 'destroy']);
+});
 
-    Route::post('/trainings/{training_uuid}/exercises', [ExerciseController::class, 'store']);
-    Route::delete('/trainings/{training_uuid}/exercises/{exercise_uuid}', [ExerciseController::class, 'destroy']);
+Route::middleware('auth:sanctum')->prefix('trainings/{training_uuid}')->group(function () {
+    Route::get('exercises', [ExerciseController::class, 'index']);
+    Route::post('exercises', [ExerciseController::class, 'store']);
+    Route::get('exercises/{uuid}', [ExerciseController::class, 'show']);
+    Route::put('exercises/{uuid}', [ExerciseController::class, 'update']);
+    Route::delete('exercises/{uuid}', [ExerciseController::class, 'destroy']);
 });
