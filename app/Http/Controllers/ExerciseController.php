@@ -5,39 +5,34 @@ namespace App\Http\Controllers;
 use App\Models\Exercise;
 use App\Models\Training;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ExerciseController extends Controller
 {
     public function store(Request $request, $training_uuid)
     {
-        $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
+        try {
+            $training = Training::where('uuid', $training_uuid)->firstOrFail();
 
-        $training = Training::where('uuid', $training_uuid)->firstOrFail();
+            $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
 
-        $exercise = Exercise::create([
-            'name' => $request->name,
-            'training_id' => $training->id
-        ]);
+            $exercise = Exercise::create([
+                'uuid' => Str::uuid(),
+                'name' => $request->name,
+                'training_id' => $training->id,
+            ]);
 
-        return response()->json([
-            'uuid' => $exercise->uuid,
-            'name' => $exercise->name
-        ], 201);
-    }
-
-    public function destroy($training_uuid, $exercise_uuid)
-    {
-        $training = Training::where('uuid', $training_uuid)->firstOrFail();
-
-        $exercise = Exercise::where('uuid', $exercise_uuid)
-            ->where('training_id', $training->id)
-            ->firstOrFail();
-
-        $exercise->delete();
-
-        return response()->json(['message' => 'Exercise deleted successfully.']);
+            return response()->json([
+                'message' => 'Exercício cadastrado com sucesso.',
+                'data' => $exercise,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao cadastrar exercício.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
-                                                                        
