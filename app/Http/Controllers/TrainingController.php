@@ -9,6 +9,51 @@ use Illuminate\Support\Str;
 
 class TrainingController extends Controller
 {
+    public function index()
+    {
+        try {
+            $user = auth()->user();
+
+            $trainings = Training::where('user_id', $user->id)->get();
+
+            return response()->json([
+                'message' => 'Treinos recuperados com sucesso.',
+                'data' => $trainings
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Erro ao recuperar treinos.',
+                'error' => $th->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $uuid)
+    {
+        try {
+            $training = Training::where('uuid', $uuid)->where('user_id', auth()->id())->firstOrFail();
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+            ]);
+
+            $training->update([
+                'name' => $validated['name'],
+            ]);
+
+            return response()->json([
+                'message' => 'Treino atualizado com sucesso.',
+                'data' => $training,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar treino: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erro ao atualizar o treino.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 
     public function store(Request $request)
     {
@@ -44,23 +89,37 @@ class TrainingController extends Controller
 
     public function show($uuid)
     {
-        $training = Training::where('uuid', $uuid)
-            ->with('exercises')
-            ->firstOrFail();
+        try {
+            $training = Training::where('uuid', $uuid)
+                ->where('user_id', auth()->id())
+                ->firstOrFail();
 
-        return response()->json([
-            'uuid' => $training->uuid,
-            'name' => $training->name,
-            'exercises' => $training->exercises->map(function ($exercise) {
-                return [
-                    'uuid' => $exercise->uuid,
-                    'name' => $exercise->name
-                ];
-            })
-        ]);
+            return response()->json([
+                'message' => 'Treino recuperado com sucesso.',
+                'data' => $training
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao buscar o treino.',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
+    public function destroy($uuid)
+    {
+        try {
+            $training = Training::where('uuid', $uuid)->where('user_id', auth()->id())->firstOrFail();
+            $training->delete();
 
-
-    
+            return response()->json([
+                'message' => 'Treino excluído com sucesso.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao excluir o treino.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
