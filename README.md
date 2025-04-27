@@ -35,12 +35,12 @@ composer install
 APP_NAME=GymControll
 APP_URL=http://localhost:8000
 
-DB_CONNECTION=pgsql
-DB_HOST=aws-0-us-east-1.pooler.supabase.com
-DB_PORT=6543
-DB_DATABASE=postgres
-DB_USERNAME=postgres.wsmpdvdbayoowxjylsip
-DB_PASSWORD=@GYMCONTROL2025
+DB_CONNECTION=----
+DB_HOST=----
+DB_PORT=----
+DB_DATABASE=----
+DB_USERNAME=----
+DB_PASSWORD=---
 
 SANCTUM_STATEFUL_DOMAINS=localhost:8000
 SESSION_DOMAIN=localhost
