@@ -1,66 +1,172 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# GymControll API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API desenvolvida em **Laravel** (PHP 8.1) com banco de dados **PostgreSQL** hospedado na **Supabase**. 
+O objetivo é permitir que o usuário crie treinos personalizados, adicione exercícios a esses treinos e registre execuções com cargas e repetições.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Tecnologias Utilizadas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.1
+- Laravel 10
+- PostgreSQL (via Supabase)
+- Sanctum (Autenticação via Bearer Token)
+- Docker (opcional para deploy)
+- WSL2 (ambiente local)
+- Postman (para testes de API)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 📚 Instalação Local
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clone o projeto:
+```bash
+git clone https://github.com/seuusuario/gymcontroll-api.git
+cd gymcontroll-api
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Instale as dependências:
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Configure o `.env`:
+```env
+APP_NAME=GymControll
+APP_URL=http://localhost:8000
 
-## Laravel Sponsors
+DB_CONNECTION=pgsql
+DB_HOST=aws-0-us-east-1.pooler.supabase.com
+DB_PORT=6543
+DB_DATABASE=postgres
+DB_USERNAME=postgres.wsmpdvdbayoowxjylsip
+DB_PASSWORD=@GYMCONTROL2025
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+SANCTUM_STATEFUL_DOMAINS=localhost:8000
+SESSION_DOMAIN=localhost
+```
 
-### Premium Partners
+4. Gere a chave de aplicação:
+```bash
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+5. Execute as migrations:
+```bash
+php artisan migrate
+```
 
-## Contributing
+6. Rode o servidor:
+```bash
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🔒 Autenticação
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Método  | Rota          | Função         |
+|---------|---------------|----------------|
+| POST    | `/api/register` | Cadastro de usuários |
+| POST    | `/api/login`    | Login e geração do token |
+| GET     | `/api/me`       | Retorna dados do usuário logado |
+| POST    | `/api/logout`   | Faz logout (invalida o token) |
 
-## Security Vulnerabilities
+**Exemplo de Registro:**
+```json
+{
+  "name": "Thomas",
+  "email": "thomas@example.com",
+  "password": "123456",
+  "password_confirmation": "123456"
+}
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🏋️‍♂️ CRUD de Treinos
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Método | Rota | Função |
+|--------|------|--------|
+| GET    | `/api/trainings` | Listar treinos do usuário |
+| POST   | `/api/trainings` | Criar novo treino |
+| GET    | `/api/trainings/{uuid}` | Detalhar treino específico |
+| PUT    | `/api/trainings/{uuid}` | Atualizar treino |
+| DELETE | `/api/trainings/{uuid}` | Deletar treino |
+
+---
+
+## 🏋️ CRUD de Exercícios
+
+| Método | Rota | Função |
+|--------|------|--------|
+| GET    | `/api/trainings/{training_uuid}/exercises` | Listar exercícios de um treino |
+| POST   | `/api/trainings/{training_uuid}/exercises` | Criar exercício |
+| GET    | `/api/trainings/{training_uuid}/exercises/{uuid}` | Mostrar exercício |
+| PUT    | `/api/trainings/{training_uuid}/exercises/{uuid}` | Atualizar exercício |
+| DELETE | `/api/trainings/{training_uuid}/exercises/{uuid}` | Deletar exercício |
+
+---
+
+## 🏋️ CRUD de Execuções
+
+| Método | Rota | Função |
+|--------|------|--------|
+| GET    | `/api/exercises/{exercise_uuid}/executions` | Listar execuções |
+| POST   | `/api/exercises/{exercise_uuid}/executions` | Criar execução |
+| GET    | `/api/executions/{uuid}` | Mostrar execução |
+| PUT    | `/api/executions/{uuid}` | Atualizar execução |
+| DELETE | `/api/executions/{uuid}` | Deletar execução |
+
+---
+
+## 🗂️ Estrutura de Banco de Dados
+
+**Tabela `users`**
+- id
+- uuid
+- name
+- email
+- password
+- timestamps
+
+**Tabela `trainings`**
+- id
+- uuid
+- name
+- user_id (FK users)
+- timestamps
+
+**Tabela `exercises`**
+- id
+- uuid
+- name
+- training_id (FK trainings)
+- timestamps
+
+**Tabela `executions`**
+- id
+- uuid
+- exercise_id (FK exercises)
+- weight
+- amount
+- timestamps
+
+---
+
+## 📸 Imagem de Fluxo (Exemplo)
+
+![Gym Training](https://cdn.pixabay.com/photo/2020/06/07/07/11/fitness-5268302_1280.jpg)
+
+---
+
+## ✨ Observações
+
+- As rotas são protegidas com `auth:sanctum`.
+- IDs internos (numéricos) são usados apenas internamente. Toda comunicação entre API e frontend usa `UUID`.
+- Todos os fluxos possuem validações e retornam mensagens amigáveis em JSON.
+
+---
+
+## 🔥 Desenvolvido por
+Thomas | GymControll Project | 2025
