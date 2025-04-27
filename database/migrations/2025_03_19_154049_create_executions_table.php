@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +14,12 @@ return new class extends Migration
         Schema::create('executions', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->unsignedBigInteger('exercises_id');
             $table->integer('weight');
             $table->integer('amount');
             $table->timestamps();
 
-            $table->foreign('exercises_id')->references('id')->on('exercises')->onDelete('cascade');
+            $table->unsignedBigInteger('exercise_id');
+            $table->foreign('exercise_id')->references('id')->on('exercises')->onDelete('cascade');
         });
     }
 
