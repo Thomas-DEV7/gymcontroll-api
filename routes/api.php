@@ -12,7 +12,11 @@ Route::get('/docs', function () {
     return view('api-docs');
 });
 Route::middleware('auth:sanctum')->group(function () {
+    
     Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/me', [AuthController::class, 'update']);
+
+
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Trainings
