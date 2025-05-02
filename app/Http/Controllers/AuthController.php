@@ -74,4 +74,21 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'birthdate' => 'nullable|date',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        $user->fill($validated);
+        $user->save();
+
+        return response()->json($user);
+    }
 }
